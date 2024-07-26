@@ -2,6 +2,16 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetterCodeBox", "BetterCodeBox\BetterCodeBox.csproj", "{F856D7BE-B31F-4ED2-8F24-35A1A9A584E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetterCodeBox.MAUI", "BetterCodeBox.MAUI\BetterCodeBox.MAUI.csproj", "{6DA7A0EE-B8CD-47E0-BCF2-828635A3C344}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetterCodeBox.RazorLib", "BetterCodeBox.RazorLib\BetterCodeBox.RazorLib.csproj", "{34D753FC-866D-40BD-BD3D-0697E88E26FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetterCodeBox.WASM", "BetterCodeBox.WASM\BetterCodeBox.WASM.csproj", "{964425D7-68F9-482B-92EC-D09B417984BF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Front Ends", "Front Ends", "{AA9B2E63-8B3B-4929-AAF7-1ED8FC3817DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetterCodeBox.Lib", "BetterCodeBox.Lib\BetterCodeBox.Lib.csproj", "{83D3A6FA-5C9D-47C7-A217-E07B4FECAE0E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +22,26 @@ Global
 		{F856D7BE-B31F-4ED2-8F24-35A1A9A584E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F856D7BE-B31F-4ED2-8F24-35A1A9A584E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F856D7BE-B31F-4ED2-8F24-35A1A9A584E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DA7A0EE-B8CD-47E0-BCF2-828635A3C344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DA7A0EE-B8CD-47E0-BCF2-828635A3C344}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DA7A0EE-B8CD-47E0-BCF2-828635A3C344}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DA7A0EE-B8CD-47E0-BCF2-828635A3C344}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34D753FC-866D-40BD-BD3D-0697E88E26FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34D753FC-866D-40BD-BD3D-0697E88E26FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34D753FC-866D-40BD-BD3D-0697E88E26FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34D753FC-866D-40BD-BD3D-0697E88E26FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{964425D7-68F9-482B-92EC-D09B417984BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{964425D7-68F9-482B-92EC-D09B417984BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{964425D7-68F9-482B-92EC-D09B417984BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{964425D7-68F9-482B-92EC-D09B417984BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83D3A6FA-5C9D-47C7-A217-E07B4FECAE0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83D3A6FA-5C9D-47C7-A217-E07B4FECAE0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83D3A6FA-5C9D-47C7-A217-E07B4FECAE0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83D3A6FA-5C9D-47C7-A217-E07B4FECAE0E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6DA7A0EE-B8CD-47E0-BCF2-828635A3C344} = {AA9B2E63-8B3B-4929-AAF7-1ED8FC3817DE}
+		{34D753FC-866D-40BD-BD3D-0697E88E26FF} = {AA9B2E63-8B3B-4929-AAF7-1ED8FC3817DE}
+		{964425D7-68F9-482B-92EC-D09B417984BF} = {AA9B2E63-8B3B-4929-AAF7-1ED8FC3817DE}
 	EndGlobalSection
 EndGlobal

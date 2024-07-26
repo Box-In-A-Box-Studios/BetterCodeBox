@@ -1,0 +1,8 @@
+﻿@using BetterCodeBox.RazorLib.Pages
+@using BetterCodeBox.RazorLib.Layout
+<Router AppAssembly="@typeof(MauiProgram).Assembly" AdditionalAssemblies="new []{typeof(Home).Assembly}">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
+        <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
+    </Found>
+</Router>

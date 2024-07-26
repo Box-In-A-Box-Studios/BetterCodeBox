@@ -1,0 +1,96 @@
+﻿@page "/"
+@using BetterCodeBox.Lib.Interfaces
+@using BetterCodeBox.Lib
+@using Microsoft.Extensions.Configuration
+@using Microsoft.Extensions.Logging
+@inject IConfiguration Configuration
+
+<PageTitle>Better Code Box</PageTitle>
+
+@if (isScanning)
+{
+    <p>Scanning...</p>
+    return;
+}
+@if (!results.Any())
+{
+    <p>Enter the directory to scan and the directory to store the results.</p>
+    <input type="text" @bind="DirectoryToScan" />
+    <button @onclick="ScanDirectory">Scan Directory</button>
+    return;
+}
+
+@foreach (var result in results)
+{
+    <h2>@result.Item1</h2>
+    @if (!result.Item2.Any() || result.Item2.All(x => x.Type == ResultType.Success))
+    {
+        <p>All Items Meet Standards.</p>
+    }
+    else
+    {
+        <p>Results:</p>
+        
+        bool hasSecondary = result.Item2.Any(x => x.SecondaryIdentifier != null);
+        
+        <table class="table table-striped table-hover w-100">
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    @if (hasSecondary)
+                    {
+                        <th>Secondary Method</th>
+                    }
+                    <th>Value</th>
+                </tr>
+              </thead>
+            <tbody>
+            @foreach (var item in result.Item2)
+            {
+                @switch (item.Type)
+                {
+                    case ResultType.Error:
+                        <tr>
+                            <td>@item.Identifier</td>
+                            @if (hasSecondary)
+                            {
+                                <td>@item.SecondaryIdentifier</td>
+                            }
+                            <td>@item.Value</td>
+                        </tr>
+                        break;
+                }
+            }
+            </tbody>
+        </table>
+    }
+
+    <hr />
+}
+
+
+@code {
+    
+    
+    public string DirectoryToScan { get; set; } = "C:\\";
+    bool isScanning { get; set; } = false;
+    private List<(string, List<Result>)> results = new();
+    
+    private async void ScanDirectory()
+    {
+        isScanning = true;
+        StateHasChanged();
+        ILogger logger = new BIABLogger();
+        List<ICodeAnalyzer> analyzers = await DirectoryScanner.ScanDirectory(DirectoryToScan, logger, Configuration);
+        
+        //Add the results to the list
+        foreach (var analyzer in analyzers)
+        {
+            var results = analyzer.GetResultAsJson();
+            this.results.Add((analyzer.GetTitle(), results));
+        }
+        
+        // Do the scanning here
+        isScanning = false;
+    }
+}
