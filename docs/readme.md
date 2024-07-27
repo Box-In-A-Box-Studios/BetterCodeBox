@@ -5,6 +5,8 @@ No Cloud Tracking, No Data Mining, No Ads, No Cost.
 
 We are making this tool to ensure our code is more maintainable and readable. We are using this tool to improve our code quality and we hope you will find it useful too.
 
+## [Latest Release](https://github.com/Box-In-A-Box-Studios/BetterCodeBox/releases/latest) 
+
 ## Current Analyzers
 1. **Duplicate Code** - Find duplicate code in your codebase.
 2. **File Length** - Find files that are too long.
