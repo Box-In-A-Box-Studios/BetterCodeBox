@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using BetterCodeBox.Lib.Interfaces
 @using BetterCodeBox.Lib
+@using Microsoft.CodeAnalysis.CSharp.Syntax
 @using Microsoft.Extensions.Configuration
 @using Microsoft.Extensions.Logging
 @inject IConfiguration Configuration
@@ -71,7 +72,7 @@
 
 @code {
     
-    
+    public static List<ICodeAnalyzer> Analyzers { get; set; } = new List<ICodeAnalyzer>();
     public string DirectoryToScan { get; set; } = "C:\\";
     bool isScanning { get; set; } = false;
     private List<(string, List<Result>)> results = new();
@@ -89,8 +90,26 @@
             var results = analyzer.GetResultAsJson();
             this.results.Add((analyzer.GetTitle(), results));
         }
-        
+        Analyzers = analyzers;
         // Do the scanning here
         isScanning = false;
+    }
+
+    public Home()
+    {
+        instance = this;
+    }
+    
+    private static Home instance;
+    
+    public static void UpdateResults()
+    {
+        instance.results.Clear();
+        foreach (var analyzer in Analyzers)
+        {
+            var results = analyzer.GetResultAsJson();
+            instance.results.Add((analyzer.GetTitle(), results));
+        }
+        instance.StateHasChanged();
     }
 }

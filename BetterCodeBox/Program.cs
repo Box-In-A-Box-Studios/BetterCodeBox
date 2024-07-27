@@ -25,16 +25,8 @@ if (!Directory.Exists(resultDirectory))
     Directory.CreateDirectory(resultDirectory);
 }
 
-foreach (var analyzer in analyzers)
-{
-    logger.LogInformation($"Writing results for {analyzer.GetTitle()}");
-    List<Result> results = analyzer.GetResultAsJson();
-    string title = analyzer.GetFileTitle();
-    string resultPath = Path.Combine(resultDirectory, title + ".json");
-    string result = JsonSerializer.Serialize(results, new JsonSerializerOptions { WriteIndented = true });
-    File.WriteAllText(resultPath, result);
-    logger.LogInformation($"Results written to {resultPath}");
-}
+string json = JSONHelper.SerializeJson(analyzers);
+await File.WriteAllTextAsync(Path.Combine(resultDirectory, "results.json"), json);
 
 // Too Tightly Coupled folders/Classes
 // Naming Conventions

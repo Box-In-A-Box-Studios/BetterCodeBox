@@ -1,0 +1,66 @@
+<Window
+    x:Class="BetterCodeBox.Desktop.Views.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:vm="using:BetterCodeBox.Desktop.ViewModels"
+    xmlns:desktop="clr-namespace:BetterCodeBox.Desktop"
+    Title="Better Code Box"
+    Width="700"
+    Height="500"
+    MinWidth="450"
+    MinHeight="300"
+    d:DesignHeight="300"
+    d:DesignWidth="450"
+    x:DataType="vm:MainWindowViewModel"
+    CanResize="True"
+    Icon="/Assets/avalonia-logo.ico"
+    SizeToContent="Manual"
+    mc:Ignorable="d">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_Application">
+                <MenuItem Command="{CompiledBinding ExitCommand}" Header="E_xit">
+                    <MenuItem.Icon>
+                        <Image Source="/Assets/outline_close_white_24dp.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_File">
+                <MenuItem Command="{CompiledBinding ExportCommand}" Header="E_xport">
+                </MenuItem>
+                <MenuItem Command="{CompiledBinding ImportCommand}" Header="I_mport">
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+
+        <Grid
+            Margin="2"
+            ClipToBounds="True"
+            ShowGridLines="False">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Panel
+                Name="PanelView"
+                Grid.Row="0"
+                Background="Black">
+                <desktop:BlazorWebView
+                    Name="WebView"
+                    RootComponents="{DynamicResource rootComponents}"
+                    Services="{DynamicResource services}"
+                    />
+            </Panel>
+        </Grid>
+    </DockPanel>
+</Window>
