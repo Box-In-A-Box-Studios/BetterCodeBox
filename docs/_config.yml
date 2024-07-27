@@ -3,3 +3,4 @@ plugins:
   - jekyll-remote-theme # add this line to the plugins list if you already have one
 title: Better Code Box
 description: Find potential issues and code smells in your code
+show_downloads: true
