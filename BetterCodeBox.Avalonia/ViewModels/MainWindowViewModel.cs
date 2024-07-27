@@ -67,34 +67,7 @@ public class MainWindowViewModel : ViewModelBase
             string json = await reader.ReadToEndAsync();
             var data = JSONHelper.ParseJson(json);
             Home.Analyzers.Clear();
-            foreach(var analyzer in data.Analyzers)
-            {
-                Home.Analyzers.Add(new FakeCodeAnalyzer(analyzer.Title, analyzer.FileTitle, analyzer.Results));
-            }
-            Home.UpdateResults();
+            Home.UpdateResults(data.Analyzers);
         }
     }
-}
-
-internal class FakeCodeAnalyzer : ICodeAnalyzer
-{
-    private readonly string _analyzerTitle;
-    private readonly string _analyzerFileTitle;
-    private readonly List<Result> _analyzerResults;
-
-    public FakeCodeAnalyzer(string analyzerTitle, string analyzerFileTitle, List<Result> analyzerResults)
-    {
-        _analyzerTitle = analyzerTitle;
-        _analyzerFileTitle = analyzerFileTitle;
-        _analyzerResults = analyzerResults;
-    }
-    
-    public string GetTitle() => _analyzerTitle;
-    public string GetFileTitle() => _analyzerFileTitle;
-    public Task Analyze(ProjectData project, IConfiguration configuration, ILogger logger)
-    {
-        return Task.CompletedTask;
-    }
-
-    public List<Result> GetResultAsJson() => _analyzerResults;
 }

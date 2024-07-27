@@ -9,6 +9,7 @@ namespace BetterCodeBox.Lib.Analyzers;
 public class TestCoverageAnalyzer : ICodeAnalyzer
 {
     private List<(string,bool)> _results = new(); 
+    private int methodCount = 0;
     public string GetTitle() => "Methods Not Covered by Tests";
 
     public string GetFileTitle() => "methods-not-covered-by-tests";
@@ -29,6 +30,7 @@ public class TestCoverageAnalyzer : ICodeAnalyzer
                 methods.Add(IdentifierHelper.GetMethodIdentifier(method));
             }
         }
+        methodCount = methods.Count;
         
         // Get all of the methods that are called in the test files
         var calledMethods = new List<string>();
@@ -81,5 +83,11 @@ public class TestCoverageAnalyzer : ICodeAnalyzer
                 Type = r.Item2 ? ResultType.Success : ResultType.Error,
                 Value = r.Item2 ? "Covered" : "Not Covered"
             }).ToList();
+    }
+    
+    public int GetScore()
+    {
+        int notCovered =  _results.Count(x => !x.Item2);
+        return 100 - (notCovered * 100 / methodCount);
     }
 }

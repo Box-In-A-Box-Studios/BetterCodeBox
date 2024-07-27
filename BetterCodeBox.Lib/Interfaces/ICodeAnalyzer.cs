@@ -10,4 +10,5 @@ public interface ICodeAnalyzer
     public string GetFileTitle();
     public Task Analyze(ProjectData project, IConfiguration configuration, ILogger logger);
     public List<Result> GetResultAsJson();
+    public int GetScore();
 }

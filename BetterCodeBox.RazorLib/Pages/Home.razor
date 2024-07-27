@@ -1,7 +1,7 @@
 ﻿@page "/"
 @using BetterCodeBox.Lib.Interfaces
 @using BetterCodeBox.Lib
-@using Microsoft.CodeAnalysis.CSharp.Syntax
+@using BetterCodeBox.RazorLib.Components
 @using Microsoft.Extensions.Configuration
 @using Microsoft.Extensions.Logging
 @inject IConfiguration Configuration
@@ -23,16 +23,19 @@
 
 @foreach (var result in results)
 {
-    <h2>@result.Item1</h2>
-    @if (!result.Item2.Any() || result.Item2.All(x => x.Type == ResultType.Success))
+    <div class="float-end">
+        <LetterGrade Score="@GetScore(result)" />
+    </div>
+    <h2>@result.Title</h2>
+    @if (!result.Results.Any() || result.Results.All(x => x.Type == ResultType.Success))
     {
         <p>All Items Meet Standards.</p>
     }
     else
     {
-        <p>Results:</p>
+        <p>Items With Issues:</p>
         
-        bool hasSecondary = result.Item2.Any(x => x.SecondaryIdentifier != null);
+        bool hasSecondary = result.Results.Any(x => x.SecondaryIdentifier != null);
         
         <table class="table table-striped table-hover w-100">
             <thead>
@@ -46,27 +49,31 @@
                 </tr>
               </thead>
             <tbody>
-            @foreach (var item in result.Item2)
+            @foreach (var item in result.Results.Where(x => x.Type == ResultType.Error).Skip(pagination[result.Title]).Take(10))
             {
-                @switch (item.Type)
-                {
-                    case ResultType.Error:
-                        <tr>
-                            <td>@item.Identifier</td>
-                            @if (hasSecondary)
-                            {
-                                <td>@item.SecondaryIdentifier</td>
-                            }
-                            <td>@item.Value</td>
-                        </tr>
-                        break;
-                }
+                <tr>
+                    <td>@item.Identifier</td>
+                    @if (hasSecondary)
+                    {
+                        <td>@item.SecondaryIdentifier</td>
+                    }
+                    <td>@item.Value</td>
+                </tr>
             }
             </tbody>
+            <tfoot>
+            <!-- Pagination -->
+            @if (result.Results.Count(x=> x.Type == ResultType.Error) > 10)
+            {
+                <button class="btn btn-primary mx-2 my-2" @onclick="() => { PreviousPage(result.Title); }" disabled="@(pagination[result.Title] <= 0)">Previous</button>
+                <button class="btn btn-primary mx-2 my-2" @onclick="() => { NextPage(result.Title); }" disabled="@(pagination[result.Title] + 10 >= result.Results.Count(x => x.Type == ResultType.Error))">Next</button>
+                <span class="mx-2 my-2">Page @(pagination[result.Title] / 10 + 1)</span>
+            }
+            </tfoot>
         </table>
     }
 
-    <hr />
+    <hr class="my-3"/>
 }
 
 
@@ -75,20 +82,24 @@
     public static List<ICodeAnalyzer> Analyzers { get; set; } = new List<ICodeAnalyzer>();
     public string DirectoryToScan { get; set; } = "C:\\";
     bool isScanning { get; set; } = false;
-    private List<(string, List<Result>)> results = new();
+    private List<AnalysisData> results = new();
+    private Dictionary<string,int> pagination = new();
     
     private async void ScanDirectory()
     {
         isScanning = true;
         StateHasChanged();
         ILogger logger = new BIABLogger();
+        instance.pagination.Clear();
+        instance.results.Clear();
         List<ICodeAnalyzer> analyzers = await DirectoryScanner.ScanDirectory(DirectoryToScan, logger, Configuration);
         
         //Add the results to the list
         foreach (var analyzer in analyzers)
         {
-            var results = analyzer.GetResultAsJson();
-            this.results.Add((analyzer.GetTitle(), results));
+            var analysisData = new AnalysisData(analyzer);
+            this.results.Add(analysisData);
+            this.pagination.Add(analyzer.GetTitle(), 0);
         }
         Analyzers = analyzers;
         // Do the scanning here
@@ -102,14 +113,45 @@
     
     private static Home instance;
     
-    public static void UpdateResults()
+    public static void UpdateResults(List<AnalysisData> dataAnalyzers)
     {
         instance.results.Clear();
-        foreach (var analyzer in Analyzers)
+        instance.pagination.Clear();
+        instance.results.AddRange(dataAnalyzers);
+        foreach (var analyzer in dataAnalyzers)
         {
-            var results = analyzer.GetResultAsJson();
-            instance.results.Add((analyzer.GetTitle(), results));
+            instance.pagination.Add(analyzer.Title, 0);
         }
         instance.StateHasChanged();
+    }
+    
+    private int GetScore(AnalysisData results)
+    {
+        if (!results.Results.Any())
+        {
+            return 100;
+        }
+        if (results.Results.All(x => x.Type == ResultType.Success))
+        {
+            return 100;
+        }
+
+        return results.CurrentScore;
+    }
+    
+    private void NextPage(string title)
+    {
+        pagination[title]+=10;
+        StateHasChanged();
+    }
+    
+    private void PreviousPage(string title)
+    {
+        pagination[title]-=10;
+        if (pagination[title] < 0)
+        {
+            pagination[title] = 0;
+        }
+        StateHasChanged();
     }
 }

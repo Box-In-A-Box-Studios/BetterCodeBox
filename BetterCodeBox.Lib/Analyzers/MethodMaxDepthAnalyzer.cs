@@ -85,4 +85,10 @@ public class MethodMaxDepthAnalyzer : ICodeAnalyzer
             }).ToList();
         return results;
     }
+    
+    public int GetScore()
+    {
+        int overMax = _results.Count(x => x.Item2 > _maxDepth);
+        return 100 - (overMax * 100 / _results.Count);
+    }
 }

@@ -11,6 +11,7 @@ namespace BetterCodeBox.Lib.Analyzers;
 public class MethodDuplicationAnalyzer : ICodeAnalyzer
 {
     private List<(string,string,double)> _results = new();
+    private int methodCount = 0;
     public string GetTitle() => "Methods that are duplicates";
 
     public string GetFileTitle() => "methods-that-are-duplicates";
@@ -23,12 +24,13 @@ public class MethodDuplicationAnalyzer : ICodeAnalyzer
             var text = File.ReadAllText(file);
             var tree = CSharpSyntaxTree.ParseText(text);
             var root = tree.GetRoot();
-            
-            var methodDeclarations = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
+
+            var methodDeclarations = root.DescendantNodes().OfType<MethodDeclarationSyntax>().ToList();
             // Remove Methods With 3 or less lines
-            methodDeclarations = methodDeclarations.Where(x => x.GetLocation().GetLineSpan().EndLinePosition.Line - x.GetLocation().GetLineSpan().StartLinePosition.Line > 3);
+            methodDeclarations = methodDeclarations.Where(x => x.GetLocation().GetLineSpan().EndLinePosition.Line - x.GetLocation().GetLineSpan().StartLinePosition.Line > 3).ToList();
             methods.AddRange(methodDeclarations);
         }
+        methodCount = methods.Count;
         
         var duplicateMethods = new List<(string,string,double)>();
         // Compare each method to every other method
@@ -110,5 +112,10 @@ public class MethodDuplicationAnalyzer : ICodeAnalyzer
                 Value = r.Item3.ToString(),
                 SecondaryIdentifier = r.Item2
             }).ToList();
+    }
+    
+    public int GetScore()
+    {
+        return 100 - ( _results.Count * 100 / methodCount);
     }
 }

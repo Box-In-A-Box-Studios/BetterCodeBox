@@ -78,4 +78,11 @@ public class ParametersPerMethodAnalyzer : ICodeAnalyzer
             }).ToList();
         return results;
     }
+    
+    public int GetScore()
+    {
+        // Get the number of methods with more than the max parameter count
+        int overMax = _results.Count(x => x.Item2 > _maxParameterCount);
+        return 100 - (overMax *100 / _results.Count);
+    }
 }

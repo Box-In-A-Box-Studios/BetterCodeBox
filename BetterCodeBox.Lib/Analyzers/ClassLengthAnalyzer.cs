@@ -36,6 +36,14 @@ public class ClassLengthAnalyzer : ICodeAnalyzer
         return results;
     }
     
+    public int GetScore()
+    {
+        // Return the number of files that are over the max lines vs the total number of files
+        int overMax = _results.Count(x => x.Item2 > _maxLines);
+        return 100 - (overMax * 100 / _results.Count);
+    }
+    
+    
     private static int GetLineCount(string filePath)
     {
         return File.ReadAllLines(filePath).Length;

@@ -13,8 +13,21 @@ public class JsonData
 
 public class AnalysisData
 {
+    public AnalysisData(ICodeAnalyzer analyzer)
+    {
+        Title = analyzer.GetTitle();
+        FileTitle = analyzer.GetFileTitle();
+        Results = analyzer.GetResultAsJson();
+        CurrentScore = analyzer.GetScore();
+    }
+    
+    public AnalysisData()
+    {
+    }
+
     public string Title { get; set; }
     public string FileTitle { get; set; }
+    public int CurrentScore { get; set; }
     
     public List<Result> Results { get; set; }
 }
@@ -35,10 +48,7 @@ public class JSONHelper
         
         foreach (var analyzer in data)
         {
-            AnalysisData analysisData = new AnalysisData();
-            analysisData.Title = analyzer.GetTitle();
-            analysisData.FileTitle = analyzer.GetFileTitle();
-            analysisData.Results = analyzer.GetResultAsJson();
+            AnalysisData analysisData = new AnalysisData(analyzer);
             jsonData.Analyzers.Add(analysisData);
         }
         
