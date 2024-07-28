@@ -2,9 +2,12 @@
 @using BetterCodeBox.Lib.Interfaces
 @using BetterCodeBox.Lib
 @using BetterCodeBox.RazorLib.Components
+@using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.Extensions.Configuration
 @using Microsoft.Extensions.Logging
+@using Microsoft.JSInterop
 @inject IConfiguration Configuration
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Better Code Box</PageTitle>
 
@@ -13,15 +16,32 @@
     <p>Scanning...</p>
     return;
 }
-@if (!results.Any())
+@if (!ResultState.Results.Any())
 {
-    <p>Enter the directory to scan and the directory to store the results.</p>
-    <input type="text" @bind="DirectoryToScan" />
-    <button @onclick="ScanDirectory">Scan Directory</button>
+    <div class="col-12 col-xxl-4 col-xl-6 col-lg-8 col-md-10 col-sm-12">
+        @if (!OperatingSystem.IsBrowser())
+        {
+            <p>Enter the directory to scan and the directory to store the results.</p>
+            <div class="input-group">
+                <label for="DirectoryToScan" class="input-group-text">Directory to Scan</label>
+                <input type="text" @bind="DirectoryToScan"  class="form-control"/>
+                <button @onclick="ScanDirectory" class="btn btn-primary">Scan</button>
+            </div>
+            <hr />
+        }
+        <!-- Or -->
+        <p>Import a file with the results</p>
+        <InputFile OnChange="ImportFile" class="form-control" />
+    
+    </div>
     return;
 }
 
-@foreach (var result in results)
+<SummaryBox Data="ResultState.Results" />
+<hr />
+
+
+@foreach (var result in ResultState.Results)
 {
     <div class="float-end">
         <LetterGrade Score="@GetScore(result)" />
@@ -79,10 +99,8 @@
 
 @code {
     
-    public static List<ICodeAnalyzer> Analyzers { get; set; } = new List<ICodeAnalyzer>();
     public string DirectoryToScan { get; set; } = "C:\\";
     bool isScanning { get; set; } = false;
-    private List<AnalysisData> results = new();
     private Dictionary<string,int> pagination = new();
     
     private async void ScanDirectory()
@@ -91,17 +109,16 @@
         StateHasChanged();
         ILogger logger = new BIABLogger();
         instance.pagination.Clear();
-        instance.results.Clear();
+        ResultState.Clear();
         List<ICodeAnalyzer> analyzers = await DirectoryScanner.ScanDirectory(DirectoryToScan, logger, Configuration);
         
         //Add the results to the list
         foreach (var analyzer in analyzers)
         {
             var analysisData = new AnalysisData(analyzer);
-            this.results.Add(analysisData);
+            ResultState.AddResult(analysisData);
             this.pagination.Add(analyzer.GetTitle(), 0);
         }
-        Analyzers = analyzers;
         // Do the scanning here
         isScanning = false;
     }
@@ -109,20 +126,29 @@
     public Home()
     {
         instance = this;
+        ResultState.OnChanged += OnResultChanged;
     }
     
-    private static Home instance;
-    
-    public static void UpdateResults(List<AnalysisData> dataAnalyzers)
+    private void OnResultChanged(object? sender, EventArgs e)
     {
-        instance.results.Clear();
-        instance.pagination.Clear();
-        instance.results.AddRange(dataAnalyzers);
-        foreach (var analyzer in dataAnalyzers)
+        instance!.pagination.Clear();
+        foreach (var analyzer in ResultState.Results)
         {
             instance.pagination.Add(analyzer.Title, 0);
         }
-        instance.StateHasChanged();
+        StateHasChanged();
+    }
+    
+    ~Home()
+    {
+        ResultState.OnChanged -= OnResultChanged;
+    }
+    
+    private static Home? instance;
+    
+    public static void UpdateResults(List<AnalysisData> dataAnalyzers)
+    {
+        ResultState.SetResult(dataAnalyzers);
     }
     
     private int GetScore(AnalysisData results)
@@ -154,4 +180,36 @@
         }
         StateHasChanged();
     }
+
+    private async void ImportFile(InputFileChangeEventArgs  obj)
+    {
+        var file = obj.File;
+        if (file != null)
+        {
+            List<AnalysisData> analyzers = new List<AnalysisData>();
+            List<string> lines = new();
+            
+            MemoryStream ms = new();
+            await file.OpenReadStream().CopyToAsync(ms);
+            ms.Position = 0;
+            using StreamReader reader = new(ms);
+            while (!reader.EndOfStream)
+            {
+                lines.Add(reader.ReadLine());
+            }
+            string json = string.Join(Environment.NewLine, lines);
+            analyzers = JSONHelper.ParseJson(json).Analyzers;
+            
+            UpdateResults(analyzers);
+        }
+    }
+
+
+    public static void ExportResults()
+    {
+        string json = JSONHelper.SerializeJson(ResultState.Results);
+        string path = Path.Combine(Directory.GetCurrentDirectory(), "results.json");
+        new CommonJSWrapper(instance.JSRuntime).SaveAsFile(path, json);
+    }
+
 }

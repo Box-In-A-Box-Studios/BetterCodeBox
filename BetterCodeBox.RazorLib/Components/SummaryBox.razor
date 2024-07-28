@@ -1,0 +1,67 @@
+@using BetterCodeBox.Lib
+<div>
+    <h1>Summary</h1>
+    <!-- Big 2x2 Box For Overall Grade -->
+    <!-- then 1x1 box for each grade of data -->
+    <!-- Start a Grid -->
+    <div class="d-grid w-100" style="grid-template-columns: 16rem 16rem 16rem 16rem 16rem 16rem; grid-gap: 0.8rem">
+        <div style="grid-column-start: 1; grid-column-end: 3; grid-row-start: 1; grid-row-end: 3; aspect-ratio: 1;">
+            <div class="card" style="height: 100%; width: 100%">
+                <div class="card-header">
+                    <h2 style="height: 48px">Overall Grade</h2>
+                </div>
+                <div class="card-body justify-content-center align-middle text-center" style="position: relative">
+                    <CircleLetterGrade Score="GetOverallGrade()" Scale="180" />
+                </div>
+            </div>
+        </div>
+        @foreach(var item in Data)
+        {
+            <div style="aspect-ratio: 1;">
+                <div class="card" style="height: 100%; width: 100%">
+                    <div class="card-header">
+                        <h5 style="height: 48px">@item.Title</h5>
+                    </div>
+                    <div class="card-body justify-content-center align-middle text-center" style="position: relative">
+                        <CircleLetterGrade Score="item.CurrentScore" Scale="60" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+@code {
+
+    [Parameter] public List<AnalysisData> Data { get; set; }
+    
+    
+    private int GetOverallGrade()
+    {
+        var total = 0;
+        
+        foreach(var item in Data)
+        {
+            total += item.CurrentScore switch
+            {
+                >= (int)LetterGrade.Grades.A => 4,
+                >= (int)LetterGrade.Grades.B => 3,
+                >= (int)LetterGrade.Grades.C => 2,
+                >= (int)LetterGrade.Grades.D => 1,
+                _ => 0
+            };
+        }
+        
+        int average = total / Data.Count;
+        
+        return average switch
+        {
+            >= 4 => (int)LetterGrade.Grades.A,
+            >= 3 => (int)LetterGrade.Grades.B,
+            >= 2 => (int)LetterGrade.Grades.C,
+            >= 1 => (int)LetterGrade.Grades.D,
+            _ => (int)LetterGrade.Grades.F
+        };
+    }
+}

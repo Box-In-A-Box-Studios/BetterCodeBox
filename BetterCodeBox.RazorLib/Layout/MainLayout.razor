@@ -1,4 +1,9 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.JSInterop
+@using BetterCodeBox.Lib
+@using BetterCodeBox.RazorLib.Pages
+@using Microsoft.AspNetCore.Components.Forms
+@inject IJSRuntime JSRuntime
+@inherits LayoutComponentBase
 
 <div class="page">
     <div class="sidebar">
@@ -6,12 +11,84 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://boxinaboxstudios.com" target="_blank">Box In A Box Website</a>
-        </div>
+        @if (OperatingSystem.IsBrowser())
+        {
+            <div class="top-row px-4 justify-content-start">
+                    
+                <!-- Implementing the above actions -->
+                <button class="btn btn-primary me-2" @onclick="OnImport">Import</button>
+                <button class="btn btn-primary mx-2" @onclick="OnExport" disabled="@ResultState.IsEmpty()">Export</button>
+                <button class="btn btn-primary mx-2" @onclick="OnClear">Clear</button>
+                    
+                
+                <!-- Hidden Input file field -->
+                <InputFile OnChange="ImportFile" id="fileInputNavbar" style="display:none" />
+                
+            </div>
+        }
 
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        ResultState.OnChanged += OnResultChanged;
+    }
+
+    private void OnResultChanged(object? sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+    
+    ~MainLayout()
+    {
+        ResultState.OnChanged -= OnResultChanged;
+    }
+
+    private async void OnImport()
+    {
+        // Trigger the file input field
+        await JSRuntime.InvokeVoidAsync("triggerFileInput", "fileInputNavbar");
+    }
+
+    private async void ImportFile(InputFileChangeEventArgs  obj)
+    {
+        OnClear();
+        var file = obj.File;
+        if (file != null)
+        {
+            List<AnalysisData> analyzers = new List<AnalysisData>();
+            List<string> lines = new();
+            
+            MemoryStream ms = new();
+            await file.OpenReadStream().CopyToAsync(ms);
+            ms.Position = 0;
+            using StreamReader reader = new(ms);
+            while (!reader.EndOfStream)
+            {
+                lines.Add(reader.ReadLine());
+            }
+            string json = string.Join(Environment.NewLine, lines);
+            analyzers = JSONHelper.ParseJson(json).Analyzers;
+            
+            Home.UpdateResults(analyzers);
+        }
+    }
+    private void OnExport()
+    {
+        // Export a file
+        Home.ExportResults();
+        StateHasChanged();
+    }
+
+    private void OnClear()
+    {
+        // Clear the results
+        ResultState.Clear();
+    }
+}

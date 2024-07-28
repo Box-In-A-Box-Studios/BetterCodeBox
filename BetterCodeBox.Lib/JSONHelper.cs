@@ -41,16 +41,20 @@ public class JSONHelper
     
     public static string SerializeJson(List<ICodeAnalyzer> data)
     {
+        List<AnalysisData> analysisData = new();
+        foreach (var analyzer in data)
+        {
+            analysisData.Add(new AnalysisData(analyzer));
+        }
+        return SerializeJson(analysisData);
+    }
+    
+    public static string SerializeJson(List<AnalysisData> data)
+    {
         JsonData jsonData = new JsonData();
         jsonData.Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         jsonData.Version = "1.0";
-        jsonData.Analyzers = new List<AnalysisData>();
-        
-        foreach (var analyzer in data)
-        {
-            AnalysisData analysisData = new AnalysisData(analyzer);
-            jsonData.Analyzers.Add(analysisData);
-        }
+        jsonData.Analyzers = data;
         
         return JsonSerializer.Serialize(jsonData);
     }

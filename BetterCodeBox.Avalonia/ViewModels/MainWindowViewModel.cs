@@ -13,6 +13,7 @@ using BetterCodeBox.Desktop.Data;
 using BetterCodeBox.Desktop.ViewModels;
 using BetterCodeBox.Lib;
 using BetterCodeBox.Lib.Interfaces;
+using BetterCodeBox.RazorLib;
 using BetterCodeBox.RazorLib.Pages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -25,6 +26,7 @@ public class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> ExitCommand { get; }
     public ReactiveCommand<Unit, Unit> ExportCommand { get; }
     public ReactiveCommand<Unit, Unit> ImportCommand { get; }
+    public ReactiveCommand<Unit, Unit> ClearCommand { get; }
     public Interaction<Unit, Unit> ExitInteraction { get; }
 
     public MainWindowViewModel()
@@ -35,6 +37,7 @@ public class MainWindowViewModel : ViewModelBase
         ExitCommand = ReactiveCommand.CreateFromTask(OnExit);
         ExportCommand = ReactiveCommand.CreateFromTask(OnExport);
         ImportCommand = ReactiveCommand.CreateFromTask(OnImport);
+        ClearCommand = ReactiveCommand.Create(ResultState.Clear);
         ExitInteraction = new Interaction<Unit, Unit>();
     }
 
@@ -50,9 +53,8 @@ public class MainWindowViewModel : ViewModelBase
         if(filePath is not null)
         {
             // Write to file
-            using var writer = new StreamWriter(filePath);
-            string json = JSONHelper.SerializeJson(Home.Analyzers);
-            await writer.WriteLineAsync(json);
+            
+            FileActions.SaveFile(filePath, ResultState.Results);
         }
     }
     
@@ -66,7 +68,7 @@ public class MainWindowViewModel : ViewModelBase
             using var reader = new StreamReader(filePath);
             string json = await reader.ReadToEndAsync();
             var data = JSONHelper.ParseJson(json);
-            Home.Analyzers.Clear();
+            ResultState.Clear();
             Home.UpdateResults(data.Analyzers);
         }
     }
