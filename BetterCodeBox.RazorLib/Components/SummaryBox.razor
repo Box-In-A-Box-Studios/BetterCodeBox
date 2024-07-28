@@ -1,4 +1,6 @@
 @using BetterCodeBox.Lib
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
 <div>
     <h1>Summary</h1>
     <!-- Big 2x2 Box For Overall Grade -->
@@ -18,14 +20,14 @@
         @foreach(var item in Data)
         {
             <div style="aspect-ratio: 1;">
-                <div class="card" style="height: 100%; width: 100%">
+                <div class="card" style="height: 100%; width: 100%" @onclick="async () => { await ScrollToElement(item); }">
                     <div class="card-header">
-                        <h5 style="height: 48px">@item.Title</h5>
-                    </div>
-                    <div class="card-body justify-content-center align-middle text-center" style="position: relative">
-                        <CircleLetterGrade Score="item.CurrentScore" Scale="60" />
-                    </div>
+                    <h5 style="height: 48px">@item.Title</h5>
                 </div>
+                <div class="card-body justify-content-center align-middle text-center" style="position: relative">
+                    <CircleLetterGrade Score="item.CurrentScore" Scale="60"/>
+        </div>
+        </div>
             </div>
         }
     </div>
@@ -63,5 +65,10 @@
             >= 1 => (int)LetterGrade.Grades.D,
             _ => (int)LetterGrade.Grades.F
         };
+    }
+    
+    private async Task ScrollToElement(AnalysisData item)
+    {
+        await new CommonJSWrapper(JSRuntime).ScrollToElement(item.FileTitle);
     }
 }

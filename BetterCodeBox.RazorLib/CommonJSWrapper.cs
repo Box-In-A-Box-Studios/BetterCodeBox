@@ -23,4 +23,10 @@ public class CommonJSWrapper
     {
         await SaveAsFile(filename, System.Text.Encoding.UTF8.GetBytes(data));
     }
+    
+    // Scroll to Element
+    public async Task ScrollToElement(string elementId)
+    {
+        await _jsRuntime.InvokeVoidAsync("scrollToElement", elementId);
+    }
 }

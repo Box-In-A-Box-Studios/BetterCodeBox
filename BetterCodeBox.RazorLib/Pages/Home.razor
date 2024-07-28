@@ -46,7 +46,7 @@
     <div class="float-end">
         <LetterGrade Score="@GetScore(result)" />
     </div>
-    <h2>@result.Title</h2>
+    <h2 id="@result.FileTitle">@result.Title</h2>
     @if (!result.Results.Any() || result.Results.All(x => x.Type == ResultType.Success))
     {
         <p>All Items Meet Standards.</p>

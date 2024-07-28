@@ -14,3 +14,12 @@ saveAsFile = function (filename, bytesBase64) {
     link.click();
     document.body.removeChild(link);
 }
+
+scrollToElement = function (id) {
+    console.log('scrollToElement: ' + id);
+    var element = document.getElementById(id);
+    if (element == null) {
+        return;
+    }
+    element.scrollIntoView({ behavior: "smooth" });
+}
