@@ -1,0 +1,75 @@
+.text-gold {
+    color: #FFD700;
+}
+.border-gold {
+    border-color: #FFD700 !important;
+}
+
+
+.shine {
+    background: linear-gradient(45deg, rgba(255,255,255,0.5) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.5) 75%, transparent 75%, transparent);
+    background-size: 200px 200px;
+    animation: shine 3s linear infinite;
+    
+}
+/* Define the animation */
+@keyframes shine {
+    0% {
+        background-position-x: 0;
+    }
+    100% {
+        background-position-x: -250%;
+    }
+}
+
+
+
+.dark-mode {
+    background-color: #333;
+    color: #fff;
+    
+    .top-row {
+        background-color: #222;
+        color: #fff;
+    }
+    
+    .card {
+        background-color: #444;
+        color: #fff;
+    }
+    
+    .card-body {
+        background-color: #444;
+        color: #fff;
+    }
+    
+    .card-title {
+        color: #fff;
+    }
+    
+    .card-text {
+        color: #fff;
+    }
+    
+    .card-footer {
+        background-color: #444;
+        color: #fff;
+    }
+    
+    .table {
+        background-color: #444;
+        color: #fff;
+    }
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #333;
+        color: #ddd;
+    }
+    .table-hover tbody tr:hover {
+        background-color: #555;
+        color: #ddd;
+    }
+    
+    .bg-light {
+        background-color: #444 !important;
+    }
+}

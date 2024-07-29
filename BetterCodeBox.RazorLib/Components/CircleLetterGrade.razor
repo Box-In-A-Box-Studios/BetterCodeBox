@@ -2,23 +2,42 @@
 @using Microsoft.JSInterop
 <div style="width: @(Scale/50.0 * 120)px; height:  @(Scale/50.0 * 120)px; display: flex; justify-content: center; margin: auto">
     
-<svg class="circles" viewbox="0 0 110 110" width="120" height="120" style="transform: scale(@(Scale/50.0));display: block; margin: auto">
-    <circle r="50" cx="60" cy="60" fill="@BackgroundColor"/>
-      
-    <path fill="none" stroke-linecap="round" stroke-width="7" stroke="@(Score> 0 ? ForegroundColor : "rgba(0,0,0,0)")"
-          stroke-dasharray="@(ScaledScore * 250),250"
-          d="M10 60
-                 a 50 50 0 1 1 0 1"
-          transform="rotate(90 60 60)"></path>
+    <svg class="circles" viewbox="0 0 110 110" width="120" height="120" style="transform: scale(@(Scale/50.0));display: block; margin: auto">
+        <circle r="50" cx="60" cy="60" fill="@BackgroundColor"/>
+    
+    
+        <!-- Path of an Outline Circle -->
+        <path fill="none" stroke-linecap="round" stroke-width="8" stroke="@(ForegroundColor)"
+              stroke-dasharray="315,250" 
+              d="M 60,10
+                 a 50,50 0 0,1 0,100
+                 a 50,50 0 0,1 0,-100"
+        ></path>
+    
+        <path fill="none" stroke-linecap="round" stroke-width="4" stroke="@(Score> 0 ? BackgroundColor : "rgba(0,0,0,0)")"
+              stroke-dasharray="@(ScaledScore * 315),250" 
+              d="M 60,10
+                 a 50,50 0 0,1 0,100
+                 a 50,50 0 0,1 0,-100"
+        ></path>
+    
         
       
-    <text class="circ-text"
-          text-anchor="middle"
-          x="60" y="75"
-          font-size="50px"
-          fill="@ForegroundColor"
-    >@Grade</text>
-</svg>
+        <text class="circ-text"
+              text-anchor="middle"
+              x="60" y="75"
+              font-size="50px"
+              stroke="4"
+              fill="@ForegroundColor"
+        >@Grade</text>
+    </svg>
+    
+    @if (Score == 100)
+    {
+        // Shine effect
+        <div class="shine rounded-circle" style="width: @(Scale/50.0 * 100)px; height: @(Scale/50.0 * 100)px; z-index: 1; position: absolute; top: 30px" >
+        </div>
+    }
 </div>
 
 @code {
@@ -28,7 +47,7 @@
     [Parameter] public int Scale { get; set; } = 50;
     
     
-    private double ScaledScore => (double)Math.Max(0, Score-(int)LetterGrade.Grades.D) / (LetterGrade.Grades.A - LetterGrade.Grades.D);
+    private double ScaledScore => (double)Math.Max(0, Score-(int)LetterGrade.Grades.D) / (100 - (int)LetterGrade.Grades.D);
     
     private ElementReference progressE;
     
@@ -39,6 +58,7 @@
         {
             return Score switch
             {
+                >= (int)LetterGrade.Grades.S => "S", // gold
                 >= (int)LetterGrade.Grades.A => "A", // success
                 >= (int)LetterGrade.Grades.B => "B", // primary
                 >= (int)LetterGrade.Grades.C => "C", // info
@@ -54,6 +74,7 @@
         {
             return Score switch
             {
+                >= (int)LetterGrade.Grades.S => "#FFD700",
                 >= (int)LetterGrade.Grades.A => "#198754",
                 >= (int)LetterGrade.Grades.B => "#0d6efd",
                 >= (int)LetterGrade.Grades.C => "#0dcaf0",
@@ -70,6 +91,7 @@
         {
             return Score switch
             {
+                >= (int)LetterGrade.Grades.S => "#000",
                 >= (int)LetterGrade.Grades.A => "#000",
                 >= (int)LetterGrade.Grades.B => "#000",
                 >= (int)LetterGrade.Grades.C => "#000",

@@ -1,8 +1,13 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Better Code Box</a>
+﻿@using BetterCodeBox.RazorLib.Pages
+
+@if (OperatingSystem.IsBrowser())
+{
+    <div class="top-row ps-3 navbar navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="">Better Code Box</a>
+        </div>
     </div>
-</div>
+}
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
 
@@ -12,6 +17,15 @@
             <a class="nav-link" href="">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </a>
+            <a class="nav-link" onclick="toggleDarkMode()">
+                <span class="bi bi-moon-fill-nav-menu" aria-hidden="true"></span> Dark Mode
+            </a>
         </div>
     </nav>
 </div>
+
+<script>
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+    }
+</script>

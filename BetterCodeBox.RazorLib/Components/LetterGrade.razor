@@ -1,4 +1,4 @@
-<h3 class="px-4 py-2 border border-1 rounded-1 @GradeColor">@Grade (@Score%)</h3>
+<h3 class="px-4 py-2 border border-3 rounded-1 @GradeColor">@Grade (@Score%)</h3>
 
 @code {
     [Parameter]
@@ -6,6 +6,7 @@
     
     public enum Grades
     {
+        S = 100,
         A = 95,
         B = 90,
         C = 80,
@@ -19,6 +20,7 @@
         {
             return Score switch
             {
+                >= (int)Grades.S => "S",
                 >= (int)Grades.A => "A",
                 >= (int)Grades.B => "B",
                 >= (int)Grades.C => "C",
@@ -34,6 +36,7 @@
         {
             return Score switch
             {
+                >= (int)Grades.S => "text-gold border-gold bg-light",
                 >= (int)Grades.A => "text-success border-success bg-light",
                 >= (int)Grades.B => "text-primary border-primary bg-light",
                 >= (int)Grades.C => "text-info border-info bg-light",

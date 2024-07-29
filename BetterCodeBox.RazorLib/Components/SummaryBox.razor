@@ -1,13 +1,12 @@
 @using BetterCodeBox.Lib
 @using Microsoft.JSInterop
 @inject IJSRuntime JSRuntime
-<div>
-    <h1>Summary</h1>
+<div style="position:relative;height: 540px">
     <!-- Big 2x2 Box For Overall Grade -->
     <!-- then 1x1 box for each grade of data -->
     <!-- Start a Grid -->
-    <div class="d-grid w-100" style="grid-template-columns: 16rem 16rem 16rem 16rem 16rem 16rem; grid-gap: 0.8rem">
-        <div style="grid-column-start: 1; grid-column-end: 3; grid-row-start: 1; grid-row-end: 3; aspect-ratio: 1;">
+    <div style="position: relative; height: inherit">
+        <div class="d-inline-block" style="aspect-ratio: 1; height: inherit">
             <div class="card" style="height: 100%; width: 100%">
                 <div class="card-header">
                     <h2 style="height: 48px">Overall Grade</h2>
@@ -17,19 +16,22 @@
                 </div>
             </div>
         </div>
-        @foreach(var item in Data)
-        {
-            <div style="aspect-ratio: 1;">
-                <div class="card" style="height: 100%; width: 100%" @onclick="async () => { await ScrollToElement(item); }">
-                    <div class="card-header">
-                    <h5 style="height: 48px">@item.Title</h5>
+        <div class="d-inline-block" style="overflow-x: auto; overflow-y: hidden; height: 540px; top: 0; left: 552px; right: 0px; position: absolute">
+            @for (var index = 0; index < Data.Count; index++)
+            {
+                var item = Data[index];
+                <div style="aspect-ratio: 1; width: 256px; height: 256px; position: absolute; top: @(index%2 * (256+12))px; left: @(index/2 * (256+12))px">
+                    <div class="card" style="height: 100%; width: 100%" @onclick="async () => { await ScrollToElement(item); }">
+                        <div class="card-header">
+                            <h5 style="height: 48px">@item.Title</h5>
+                        </div>
+                        <div class="card-body justify-content-center align-middle text-center" style="position: relative">
+                            <CircleLetterGrade Score="item.CurrentScore" Scale="60"/>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body justify-content-center align-middle text-center" style="position: relative">
-                    <CircleLetterGrade Score="item.CurrentScore" Scale="60"/>
+            }
         </div>
-        </div>
-            </div>
-        }
     </div>
 </div>
 
