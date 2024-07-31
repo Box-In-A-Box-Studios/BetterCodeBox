@@ -1,5 +1,5 @@
 ## Better Code Box
-Local, expandable, and power tool for finding issues and code smells in your codebase.
+Local, expandable, and powerful tool for finding issues and code smells in your codebase.
 
 No Cloud Tracking, No Data Mining, No Ads, No Cost.
 
